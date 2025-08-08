@@ -1,0 +1,16 @@
+[
+    {
+        "courseId": "9f97a492-87b4-4125-bbfe-17f415c42c9d",
+        "contentId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+        "organizationId": 8,
+        "contentCode": "contentCode_1",
+        "title": "Title_1",
+        "description": "Description_1",
+        "briefDescription": "Brief_Description_1",
+        "statusId": 1,
+        "created": "2024-02-10T12:00:00",
+        "createdBy": "81cac04b-efb5-482a-8f50-92bf89b89126",
+        "lastModified": "2024-02-10T12:00:00",
+        "lastModifiedBy": "81cac04b-efb5-482a-8f50-92bf89b89126"
+    }
+]

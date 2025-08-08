@@ -1,0 +1,21 @@
+variables:
+  - name: targetEnv
+    value: prd-us
+  - name: subscriptionId
+    value: 48d98a9a-2f7b-46ac-9a18-3aabd9fbd39a
+  - name: primaryLocation
+    value: northcentralus
+  - name: pairedLocation
+    value: southcentralus
+  - name: acrEndpoint
+    value: prdscuslmscr001.azurecr.io
+  - name: azureResourceManagerConnection
+    value: shared-us-platforms-workloads-prod
+  - name: acrServiceConnection
+    value: acr-prdscuslmscr001-PlatformDevelopment
+  - name: agentPool
+    value: prd-ncus-agent-pool
+  - name: azureSqlServer
+    value: prd-us-lms-sqlmi-001-fog.df0914845b95.database.windows.net
+  - name: connectedServiceNameARM
+    value: sqlmigration-prd-us

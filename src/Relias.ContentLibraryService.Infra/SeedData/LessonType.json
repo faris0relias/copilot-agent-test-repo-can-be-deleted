@@ -1,0 +1,14 @@
+[
+  {
+    "lessonTypeId": "780cdf7a-3519-452d-b87e-8c08d7a07289",
+    "lessonTypeName": "File"
+  },
+  {
+    "lessonTypeId": "60f3b5f9-65f3-43c4-95ea-6af855b9c901",
+    "lessonTypeName": "URL"
+  },
+  {
+    "lessonTypeId": "9409b731-c006-480c-8980-9e5f506320f9",
+    "lessonTypeName": "Author content"
+  }
+]

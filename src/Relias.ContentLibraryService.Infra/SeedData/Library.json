@@ -1,0 +1,45 @@
+[
+  {
+    "libraryId": "fe224548-bdbc-4e5f-8d9b-f416cf3f70b7",
+    "libraryCode": "LB_1",
+    "libraryName": "Library_1",
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "isActive":true,
+    "moduleIds": [ "8b03b3dd-864d-4d3d-bfab-c21d82c528b2" ]
+  },
+  {
+    "libraryId": "0f6cfd41-ae31-4544-92bc-f79729cff1f9",
+    "libraryCode": "LB_2",
+    "libraryName": "Library_2",
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "isActive":true,
+    "moduleIds": [ "c8808e0b-84d6-468d-a492-60ab1469c8ba" ]
+  },
+  {
+    "libraryId": "54079522-7a51-44e9-bf6c-28ed444bb738",
+    "libraryCode": "LB_3",
+    "libraryName": "Library_3",
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "isActive":true,
+    "moduleIds": [ "bf9e4840-0782-4507-ac7c-d3fe4802c4d9" ]
+  },
+  {
+    "libraryId": "450af6dc-22c1-430f-8f09-1acf419005bf",
+    "libraryCode": "LB_4",
+    "libraryName": "Library_4",
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "isActive":true,
+    "moduleIds": [ "5d56fd94-4ccd-44fa-a59b-256e47a7b1b4" ]
+  },
+  {
+    "libraryId": "966236bf-ab69-450d-81ac-e0762cbd2a8e",
+    "libraryCode": "LB_5",
+    "libraryName": "Library_5",
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "isActive":false,
+    "moduleIds": [
+      "e490b125-b6fc-4587-b6ac-a23a64d34e3b",
+      "bf9e4840-0782-4507-ac7c-d3fe4802c4d9"
+    ]
+  }
+]

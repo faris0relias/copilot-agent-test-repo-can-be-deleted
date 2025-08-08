@@ -1,0 +1,85 @@
+parameters:
+  - name: overlayFiles
+    type: string
+  - name: gitopsRepo
+    type: string
+  - name: branch
+    type: string
+
+steps:
+  - checkout: ${{parameters.gitopsRepo}}
+    persistCredentials: true
+
+  - pwsh: |
+      # Setup the git environment for the automated commit
+      git config --global user.email "azure@reliaslearning.com"
+      git config --global user.name "azuredevops-cicd"
+      git config --global advice.detached head false
+      git config --global pull.rebase true
+
+    workingDirectory: $(Build.SourcesDirectory)
+    displayName: Set Git Environment - $(targetEnv)
+  
+  - pwsh: | 
+      $overlayFilesArray = "${{parameters.overlayFiles}}" -split ','
+
+      foreach ($overlayFile in $overlayFilesArray) {
+        # Define the path to the file
+        $overlayFilePath = "overlays/$(targetEnv)/$overlayFile"
+
+        Write-Host "##[command]git pull"
+        git pull origin HEAD:${{parameters.branch}}
+
+        # Replace the image tag, add, and commit.
+        Write-Host "##[debug]yq eval to replace Image tag to: $(Build.BuildId)"
+        yq eval '.spec.template.spec.containers[0].image |= sub(":.*"; ":$(Build.BuildId)")' $overlayFilePath -i
+        
+        Write-Host "##[command]git add"
+        git add $overlayFilePath
+
+        Write-Host "##[command]git commit"
+        git commit -m "Updated $overlayFile image to version $(Build.BuildId) - $(targetEnv)"
+        }
+      # Define the maximum number of attempts
+      $maxAttempts = 5
+
+      # Attempt to update git with retries
+      $attempts = 0
+
+
+      # Git push retry loop to handle concurrent stages updating the repo at the same time
+      while ($attempts -lt $maxAttempts) {
+          try {
+            Write-Host "##[debug]Starting git push attempt $attempts"
+            Write-Host "##[command]git pull"
+            git pull origin HEAD:${{parameters.branch}}
+
+            # Execute the Git push command and capture the exit code
+            Write-Host "##[command]git push"
+            $pushResult = git push origin HEAD:${{parameters.branch}} 2>&1
+
+            # Check if the push failed or not, and then retry if another stage had the branch in-use.
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "##[debug]Push Result: $pushResult"
+                Write-Host "##[debug]Attempt $attempts succeeded."
+                break  # Exit the loop if the Git push command succeeds
+            } else {
+                $sleepTime = (Get-Random -Minimum 10 -Maximum 30)
+                Write-Host "##[warning]Push attempt $attempts failed. Retrying in $sleepTime seconds..."
+                Write-Host "##[debug](this time is randomized from 10-30s to support multi-stage concurrency)"
+                Write-Host "##[warning]Error Output: $pushResult"
+                $attempts++
+                Start-Sleep -Seconds $sleeptime  # Randomized delay from 10-30 seconds
+            }
+          }
+          catch {
+              Write-Host "##[error]Exception Caught - Exiting" 
+              throw '_$'
+              }
+            }
+      if ($attempts -ge $maxAttempts) {
+        throw 'Maximum attempts reached.'
+      }
+      Write-Host "##[debug]Task completed successfully."
+    workingDirectory: $(Build.SourcesDirectory)
+    displayName: Update Flux - $(targetEnv)

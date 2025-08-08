@@ -1,0 +1,52 @@
+parameters:
+  - name: solutionRoot
+    type: string
+  - name: imageName
+    type: string
+  - name: tag
+    type: string
+  - name: dockerFile
+    type: string
+  - name: laceworkAccount
+    type: string
+  - name: laceworkPassword
+    type: string
+  - name: attachImage
+    type: boolean
+    default: true
+  - name: token
+    type: string
+
+steps:
+  - bash: |
+      docker build \
+        -t ${{parameters.imageName}}:${{parameters.tag}} \
+        --build-arg VSS_NUGET_ACCESSTOKEN=${{parameters.token}} \
+        -f '${{parameters.dockerFile}}' .
+    workingDirectory: '${{parameters.solutionRoot}}'
+    displayName: Docker Build - ${{parameters.imageName}}:${{parameters.tag}}
+
+  - bash: |
+      docker run \
+      -e LW_ACCOUNT_NAME=${{parameters.laceworkAccount}} \
+      -e LW_ACCESS_TOKEN=${{parameters.laceworkPassword}} \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      lacework/lacework-inline-scanner:latest \
+      image evaluate ${{parameters.imageName}} ${{parameters.tag}} \
+      -j | tee ${{parameters.imageName}}-scan-results.json
+    displayName: Lacework Scan - ${{parameters.imageName}}:${{parameters.tag}}
+
+  - bash: |
+      docker save \
+        -o ${{parameters.imageName}}_${{parameters.tag}}.tar \
+        ${{parameters.imageName}}:${{parameters.tag}}
+    condition: ${{ eq(parameters.attachImage, 'true') }}
+    displayName: Docker Save - ${{parameters.imageName}}:${{parameters.tag}}
+
+  - task: PublishPipelineArtifact@1
+    displayName: Attach Artifact - ${{parameters.imageName}}:${{parameters.tag}}
+    condition: ${{ eq(parameters.attachImage, 'true') }}
+    inputs:
+      targetPath: ${{parameters.imageName}}_${{parameters.tag}}.tar
+      artifactType: pipeline
+      artifactName: ${{parameters.imageName}}_${{parameters.tag}}

@@ -1,0 +1,11 @@
+services:
+  content-library-service:
+    container_name: content-library-service-api
+    build:
+      context: ./src
+      dockerfile: ./Relias.ContentLibraryService.Api/Dockerfile
+    ports:
+      - 7000:8080
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

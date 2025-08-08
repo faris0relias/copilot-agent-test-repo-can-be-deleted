@@ -1,0 +1,26 @@
+parameters:
+  - name: iacRoot
+    type: string
+  - name: azureResourceManagerConnection
+    type: string
+
+steps:
+  
+  - task: AzureCLI@2
+    displayName: Deploy Infra - $(targetEnv) - $(primaryLocation)
+    inputs:
+      azureSubscription: ${{parameters.azureResourceManagerConnection}}
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        write-host "setting subscription $(subscriptionId)"
+        az config set bicep.use_binary_from_path=false
+        az account set --subscription $(subscriptionId)
+
+        write-host "running create against $(targetEnv)-$(primaryLocation)"
+        az deployment sub create `
+        --name deploy-infra-$(targetEnv)-$(Build.BuildId) `
+        --no-prompt true `
+        --location $(primaryLocation) `
+        --template-file '${{parameters.iacRoot}}/infra.bicep' `
+        --parameters '${{parameters.iacRoot}}/parameters/infra-$(targetEnv).bicepparam'

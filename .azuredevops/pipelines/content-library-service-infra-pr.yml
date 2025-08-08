@@ -1,0 +1,126 @@
+name: $(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - .iac/*
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  ## Build Stage ###
+  - stage: buildStage
+    displayName:  Build
+    jobs:
+      - template: ./templates/jobs-lint.yml
+    
+
+  ### Dev1 Stage ###
+  - stage: whatIf_Dev1
+    pool: $(agentPool)
+    displayName: 'What-if Dev1'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-dev1.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  ### Dev2 Stage ###
+  - stage: whatIf_Dev2
+    pool: $(agentPool)
+    displayName: 'What-if Dev2'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-dev2.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  ### STG-DE Stage ###
+  - stage: whatIf_stg_de
+    pool: $(agentPool)
+    displayName: 'What-if STG-DE'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-stg-de.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  ### STG-US Stage ###
+  - stage: whatIf_stg_us
+    pool: $(agentPool)
+    displayName: 'What-if STG-US'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-stg-us.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  ### PRD-DE Stage ###
+  - stage: whatIf_prd_de
+    pool: $(agentPool)
+    displayName: 'What-if PRD-DE'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-prd-de.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  ### PRD-US Stage ###
+  - stage: whatIf_prd_us
+    pool: $(agentPool)
+    displayName: 'What-if PRD-US'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-prd-us.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  ### PRD-CA Stage ###
+  - stage: whatIf_prd_ca
+    pool: $(agentPool)
+    displayName: 'What-if PRD-CA'
+    dependsOn: buildStage
+    variables: 
+      - template: ./variables/infra-prd-ca.yml
+    jobs: 
+      - job: whatIf
+        displayName: 'What-If'
+        steps: 
+          - template: ./templates/infra-what-if.yml
+            parameters:
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}

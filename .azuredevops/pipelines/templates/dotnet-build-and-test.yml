@@ -1,0 +1,88 @@
+### dotnet-build-and-test.yml template
+### Encapsulates the logic to prepare for sonarcloud analysis, build the projects, run the automated tests, and to publish
+### the sonarcloud analysis and code coverage results
+
+parameters:
+  - name: command
+    type: string
+  - name: devopsScriptsPath
+    type: string
+  - name: projects
+    type: object
+  - name: srcRoot
+    type: string
+  - name: sonarCloudName
+    type: string
+  - name: sonarProjectKey
+    type: string
+  - name: sonarProjectName
+    type: string
+  - name: testProjects
+    type: object
+  - name: testRoot
+    type: string
+  - name: artifactName
+    type: string
+
+steps:
+  - task: SonarCloudPrepare@3
+    displayName: Prepare SonarCloud Analyzer
+    inputs:
+      SonarCloud: ${{parameters.sonarCloudName}}
+      organization: relias-github
+      scannerMode: dotnet
+      projectKey: ${{parameters.sonarProjectKey}}
+      projectName: ${{parameters.sonarProjectName}}
+      extraProperties: |
+        sonar.cs.opencover.reportsPaths=$(System.ArtifactsDirectory)/**/*.opencover.xml
+        sonar.cs.vstest.reportsPaths=$(System.ArtifactsDirectory)/**/*.trx
+        sonar.exclusions=**/obj/**,**/*.dll,**/Migrations/**/*.cs
+        sonar.coverage.exclusions=**/Migrations/**/*.cs
+
+  - ${{each project in parameters.projects}}:
+      - task: DotNetCoreCLI@2
+        displayName: Dotnet ${{parameters.command}} - ${{project}}
+        inputs:
+          command: ${{parameters.command}}
+          projects: ${{parameters.srcRoot}}/${{project}}/${{project}}.csproj
+          ${{if eq(parameters.command, 'build')}}:
+            arguments: --configuration Release
+          ${{if eq(parameters.command, 'publish')}}:
+            arguments: --configuration Release --output $(System.ArtifactsDirectory)
+            publishWebProjects: false
+            zipAfterPublish: true
+
+  - ${{each testProject in parameters.testProjects}}:
+      - task: DotNetCoreCLI@2
+        displayName: Dotnet Test - ${{testProject}}
+        inputs:
+          command: test
+          projects: ${{parameters.testRoot}}/${{testProject}}/${{testProject}}.csproj
+          arguments: '--logger trx
+            --collect:"XPlat Code Coverage"
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura'
+
+      # Consolidate Test Reports And Coverage Files To Publish
+      - task: PowerShell@2
+        displayName: Copy Test Report And Coverage Files - ${{testProject}}
+        inputs:
+          targetType: filepath
+          filePath: "${{parameters.devopsScriptsPath}}/copy-test-results-files-to-staging.ps1"
+          arguments: >
+            -TestProject "${{testProject}}"
+
+  - publish: "$(System.ArtifactsDirectory)/test-result-files" # Publish Test Report and Code Coverage Files As A Pipeline Artifact
+    artifact: ${{parameters.artifactName}}_Test_Report_Files
+    displayName: Publish Test Reports and Code Coverage Artifact
+
+  - task: PublishCodeCoverageResults@2
+    displayName: Publish Code Coverage Summary To Pipeline
+    inputs:
+      codeCoverageTool: "Cobertura" # 'Cobertura' | 'JaCoCo'. Required. Code coverage tool. Default: JaCoCo.
+      summaryFileLocation: "$(System.ArtifactsDirectory)/test-result-files/*cobertura.xml"
+
+  - task: SonarCloudAnalyze@3
+    displayName: SonarCloud Analyze - ${{parameters.sonarProjectName}}
+
+  - task: SonarCloudPublish@3
+    displayName: SonarCloud Publish - ${{parameters.sonarProjectName}}

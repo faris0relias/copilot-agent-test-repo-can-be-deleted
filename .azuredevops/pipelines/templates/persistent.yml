@@ -1,0 +1,83 @@
+parameters:
+  - name: connectedServiceNameARM
+    type: string
+  - name: agentPool
+    type: string
+jobs:
+  - job: cls_api_sql_scripts
+    displayName: Api Resource SQL Scripts
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: NuGetAuthenticate@1
+      - task: UseDotNet@2
+        displayName: Use .NET Core SDK $(dotnetVersion)
+        inputs:
+          version: $(dotnetVersion)
+      - task: DotNetCoreCLI@2
+        displayName: "Install EFCore"
+        inputs:
+          command: custom
+          custom: tool
+          arguments: "install --global dotnet-ef --version 8.0.*"
+      - task: DotNetCoreCLI@2
+        displayName: Create SQL Scripts
+        inputs:
+          command: custom
+          custom: ef
+          arguments: "migrations script -i \
+            -o $(Build.SourcesDirectory)/SQL/migrations.sql \
+            -p $(srcRoot)/Relias.ContentLibraryService.Infra/Relias.ContentLibraryService.Infra.csproj \
+            -c ApplicationDbContext"
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Artifact: SQLScripts"
+        inputs:
+          PathtoPublish: $(Build.SourcesDirectory)/SQL/migrations.sql
+          ArtifactName: SQLScripts
+  - job: cls_db_deploy
+    displayName: Database Schema Deploy
+    dependsOn: cls_api_sql_scripts
+    pool: $(agentPool)
+    steps:
+      - task: PowerShell@2
+        displayName: "Install DBATools"
+        inputs:
+          targetType: "inline"
+          script: |
+            Write-Host "##[command] Installing Module DbaTools"
+            if (!(Get-Module DbaTools)) {
+              Install-Module DbaTools -Force
+              Import-Module DbaTools
+            } else {
+              Write-Host "##vso[task.logissue type=warning] DbaTools is already installed." -ForegroundColor Green
+            } 
+      - download: current
+        artifact: SQLScripts
+      - task: AzurePowerShell@5
+        displayName: "Run DB Migrations"
+        inputs:
+          azureSubscription: ${{ parameters.connectedServiceNameARM }}
+          azurePowerShellVersion: LatestVersion
+          scriptType: "InlineScript"
+          inline: |
+            Import-Module -Name DbaTools
+                $scripts="$(Pipeline.Workspace)/SQLScripts/migrations.sql"
+                Write-Host $scripts
+                try {
+                  $secureToken = (Get-AzAccessToken -AsSecureString -ResourceUrl https://database.windows.net).Token 
+
+                  # Convert SecureString to plain string for dbatools
+                  $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
+                  try {
+                      $accessToken = [System.Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr)
+                  } finally {
+                      [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr)
+                  }
+                  $server = Connect-DbaInstance -SqlInstance $(azureSqlServer) -Database "content-library-service" -AccessToken $accessToken -Verbose
+                  Invoke-DbaQuery -SqlInstance $server -Database "content-library-service" -File $scripts
+                }
+            catch {
+              Write-Host $_.Exception.Message
+              exit 1
+            }
+

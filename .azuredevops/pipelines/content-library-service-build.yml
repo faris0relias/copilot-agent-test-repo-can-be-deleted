@@ -1,0 +1,800 @@
+name: $(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/*
+      - tests/*
+      - .azuredevops/*
+      - .iac/*
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  repositories:
+    - repository: content-library-service-gitops
+      type: github
+      endpoint: Relias-Github
+      name: relias-engineering/content-library-service-gitops
+    - repository: cortex-devops
+      type: bitbucket
+      endpoint: 'Relias-Bitbucket'
+      name: relias/cortex-devops
+
+variables:
+  dotnetVersion: 8.0.x
+  solutionRoot: $(Build.SourcesDirectory)
+  testRoot: tests
+  srcRoot: src
+  iacRoot: .iac
+  sonarCloudName: Relias SonarCloud-GH
+  parameters.webApiClientSecret.value: $(WEBAPI_CLIENT_SECRET)
+  Dockertoken: $(System.AccessToken)
+
+
+stages:
+  - stage: BuildAndUnitTest
+    displayName: Build and Unit Test Solution
+    jobs:
+      - job: BuildAndUnitTest
+        displayName: Build and Unit Test Solution
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET Core SDK $(dotnetVersion)
+            inputs:
+              version: $(dotnetVersion)
+
+          - task: NuGetAuthenticate@1
+            displayName: NuGet Authenticate
+
+          - template: ./templates/dotnet-build-and-test.yml
+            parameters:
+              command: build
+              devopsScriptsPath: $(solutionRoot)/.azuredevops/pipelines/scripts
+              projects:
+                - Relias.ContentLibraryService.Api
+                - Relias.ContentLibraryService.Consumer
+              srcRoot: $(srcRoot)
+              sonarCloudName: $(sonarCloudName)
+              sonarProjectKey: relias-engineering_content-library-service
+              sonarProjectName: content-library-service
+              testProjects:
+                - Relias.ContentLibraryService.Api.Tests
+                - Relias.ContentLibraryService.App.Tests
+                - Relias.ContentLibraryService.Infra.Tests
+                - Relias.ContentLibraryService.Consumer.Tests
+                - Relias.ContentLibraryService.Integration.Tests
+                - Relias.ContentLibraryService.Function.Tests
+              testRoot: $(testRoot)
+              artifactName: Unit
+
+  - stage: BuildAndAttachDockerImages
+    displayName: Build And Attach Docker Images
+    dependsOn:
+      - BuildAndUnitTest
+    jobs:
+      - job: BuildAndAttachDockerImages
+        displayName: Build And Attach API Docker Images
+        steps:
+          - template: ./templates/docker-build.yml
+            parameters:
+              solutionRoot: $(solutionRoot)
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              dockerFile: $(srcRoot)/Relias.ContentLibraryService.Api/Dockerfile
+              laceworkAccount: relias
+              laceworkPassword: $(LW_ACCESS_TOKEN)
+              attachImage: true
+              token: $(DockerToken)
+              
+  
+  - stage: BuildAndAttachConsumerDockerImages
+    displayName: Build And Attach Consumer Docker Images
+    dependsOn:
+      - BuildAndUnitTest
+    jobs:
+      - job: BuildAndAttachDockerImages
+        displayName: Build And Attach Consumer Docker Images
+        steps:
+          - template: ./templates/docker-build.yml
+            parameters:
+              solutionRoot: $(solutionRoot)
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              dockerFile: $(srcRoot)/Relias.ContentLibraryService.Consumer/Dockerfile
+              laceworkAccount: relias
+              laceworkPassword: $(LW_ACCESS_TOKEN)
+              attachImage: true
+              token: $(DockerToken)
+
+  ### DEV Stages ###
+
+  ### DEV - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_Dev
+    pool: $(agentPool)
+    displayName: Push API Docker Images To ACR - Dev
+    dependsOn:
+      - BuildAndAttachDockerImages
+    variables:
+      - template: ./variables/infra-dev1.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+  - stage: PushConsumerDockerImagesToACR_Dev
+    pool: $(agentPool)
+    displayName: Push Consumer Docker Images To ACR - Dev
+    dependsOn:
+      - BuildAndAttachConsumerDockerImages
+    variables:
+      - template: ./variables/infra-dev1.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+  ### DEV1 Infra Stages ###
+  - stage: DeployInfra_Dev1
+    pool: $(agentPool)
+    displayName: Deploy Infra - Dev1
+    dependsOn:
+      - PushDockerImagesToACR_Dev
+    variables:
+      - template: ./variables/infra-dev1.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - Dev1
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_Dev1
+    displayName: SQL Setup - Dev1
+    dependsOn:
+      - DeployInfra_Dev1
+    variables:
+      - template: ./variables/infra-dev1.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_Dev1
+    displayName: Update Flux Dev1
+    dependsOn:
+      - DeployInfra_Dev1
+    variables:
+      - template: ./variables/infra-dev1.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - Dev1
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml'
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  ### DEV2 Infra Stages ###
+  - stage: DeployInfra_Dev2
+    pool: $(agentPool)
+    displayName: Deploy Infra - Dev2
+    dependsOn:
+      - PushDockerImagesToACR_Dev
+    variables:
+      - template: ./variables/infra-dev2.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - Dev2
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_Dev2
+    displayName: SQL Setup - Dev2
+    dependsOn:
+      - DeployInfra_Dev2
+    variables:
+      - template: ./variables/infra-dev2.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_Dev2
+    displayName: Update Flux - Dev2
+    dependsOn:
+      - DeployInfra_Dev2
+    variables:
+      - template: ./variables/infra-dev2.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - Dev2
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml'
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  # ### Staging Stages ###
+
+  ### Staging Approval Gate ###
+  - stage: Staging_Approval_Gate
+    displayName: Staging Approval Gate
+    dependsOn:
+      - UpdateFlux_Dev1
+      - UpdateFlux_Dev2
+    jobs:
+      - deployment: Approved
+        environment: cls-stg-gate
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+  ### STG-US - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_STG_US
+    pool: $(agentPool)
+    displayName: Push Docker Images To ACR - STG-US
+    dependsOn:
+      - Staging_Approval_Gate
+    variables:
+      - template: ./variables/infra-stg-us.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+  ### STG-US Infra Stages ###
+  - stage: DeployInfra_STG_US
+    pool: $(agentPool)
+    displayName: Deploy Infra - STG-US
+    dependsOn:
+      - PushDockerImagesToACR_STG_US
+    variables:
+      - template: ./variables/infra-stg-us.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - STG-US
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_STG_US
+    displayName: SQL Setup - STG-US
+    dependsOn:
+      - DeployInfra_STG_US
+    variables:
+      - template: ./variables/infra-stg-us.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_STG_US
+    displayName: Update Flux - STG-US
+    dependsOn:
+      - DeployInfra_STG_US
+    variables:
+      - template: ./variables/infra-stg-us.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - STG-US
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml'
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  ### STG-DE - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_STG_DE
+    pool: $(agentPool)
+    displayName: Push Docker Images To ACR - STG-DE
+    dependsOn:
+      - Staging_Approval_Gate
+    variables:
+      - template: ./variables/infra-stg-de.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+  ### STG-DE Infra Stages ###
+  - stage: DeployInfra_STG_DE
+    pool: $(agentPool)
+    displayName: Deploy Infra - STG-DE
+    dependsOn:
+      - PushDockerImagesToACR_STG_DE
+    variables:
+      - template: ./variables/infra-stg-de.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - STG-DE
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_STG_DE
+    displayName: SQL Setup - STG_DE
+    dependsOn:
+      - DeployInfra_STG_DE
+    variables:
+      - template: ./variables/infra-stg-de.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_STG_DE
+    displayName: Update Flux - STG-DE
+    dependsOn:
+      - DeployInfra_STG_DE
+    variables:
+      - template: ./variables/infra-stg-de.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - STG-DE
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml' 
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  # ### Production Stages ###
+
+  ### Production Approval Gate ###
+  - stage: Production_Approval_Gate
+    displayName: Production Approval Gate
+    dependsOn:
+      - UpdateFlux_STG_US
+      - UpdateFlux_STG_DE
+    jobs:
+      - deployment: Approved
+        environment: production-approval-gate
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+  ### PRD-US - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_PRD_US
+    pool: $(agentPool)
+    displayName: Push Docker Images To ACR - PRD-US
+    dependsOn:
+      - Production_Approval_Gate
+    variables:
+      - template: ./variables/infra-prd-us.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+    ### PRD-US Infra Stages ###
+  - stage: DeployInfra_PRD_US
+    pool: $(agentPool)
+    displayName: Deploy Infra - PRD-US
+    dependsOn:
+      - PushDockerImagesToACR_PRD_US
+    variables:
+      - template: ./variables/infra-prd-us.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - PRD-US
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_PRD_US
+    displayName: SQL Setup - PRD-US
+    dependsOn:
+      - DeployInfra_PRD_US
+    variables:
+      - template: ./variables/infra-prd-us.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_PRD_US
+    displayName: Update Flux - PRD-US
+    dependsOn:
+      - DeployInfra_PRD_US
+    variables:
+      - template: ./variables/infra-prd-us.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - PRD-US
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml' #TODO add api to this
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  ### PRD-DE - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_PRD_DE
+    pool: $(agentPool)
+    displayName: Push Docker Images To ACR - PRD-DE
+    dependsOn:
+      - Production_Approval_Gate
+    variables:
+      - template: ./variables/infra-prd-de.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+  ### PRD-DE Infra Stages ###
+  - stage: DeployInfra_PRD_DE
+    pool: $(agentPool)
+    displayName: Deploy Infra - PRD-DE
+    dependsOn:
+      - PushDockerImagesToACR_PRD_DE
+    variables:
+      - template: ./variables/infra-prd-de.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - PRD-DE
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_PRD_DE
+    displayName: SQL Setup - PRD_DE
+    dependsOn:
+      - DeployInfra_PRD_DE
+    variables:
+      - template: ./variables/infra-prd-de.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_PRD_DE
+    displayName: Update Flux - PRD-DE
+    dependsOn:
+      - DeployInfra_PRD_DE
+    variables:
+      - template: ./variables/infra-prd-de.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - PRD-DE
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml' 
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  ### PRD-CA - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_PRD_CA
+    pool: $(agentPool)
+    displayName: Push Docker Images To ACR - PRD-CA
+    dependsOn:
+      - Production_Approval_Gate
+    variables:
+      - template: ./variables/infra-prd-ca.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+  ### PRD-CA Infra Stages ###
+  - stage: DeployInfra_PRD_CA
+    pool: $(agentPool)
+    displayName: Deploy Infra - PRD-CA
+    dependsOn:
+      - PushDockerImagesToACR_PRD_CA
+    variables:
+      - template: ./variables/infra-prd-ca.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - PRD-CA
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_PRD_CA
+    displayName: SQL Setup - PRD_CA
+    dependsOn:
+      - DeployInfra_PRD_CA
+    variables:
+      - template: ./variables/infra-prd-ca.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_PRD_CA
+    displayName: Update Flux - PRD-CA
+    dependsOn:
+      - DeployInfra_PRD_CA
+    variables:
+      - template: ./variables/infra-prd-ca.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - PRD-CA
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml' 
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}
+
+  # ### Sandbox Stages ###
+
+  ### Sandbox Approval Gate ###
+  - stage: Sandbox_Approval_Gate
+    displayName: Sandbox Approval Gate
+    dependsOn:
+      - UpdateFlux_PRD_US
+    jobs:
+      - deployment: Approved
+        environment: sandbox-approval-gate
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: none
+
+  ### SBOX-US - Docker Push to ACR ###
+  - stage: PushDockerImagesToACR_SBOX_US
+    pool: $(agentPool)
+    displayName: Push Docker Images To ACR - SBOX-US
+    dependsOn:
+      - Sandbox_Approval_Gate
+    variables:
+      - template: ./variables/infra-sbox-us.yml
+    jobs:
+      - job: PushDockerImageToACR
+        displayName: Push Docker Images To ACR
+        steps:
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+          - template: ./templates/docker-push-to-acr.yml
+            parameters:
+              imageName: content-library-service-consumer
+              tag: $(Build.BuildId)
+              acrServiceConnection: ${{variables.acrServiceConnection}}
+              acrEndpoint: $(acrEndpoint)
+
+
+    ### SBOX-US Infra Stages ###
+  - stage: DeployInfra_SBOX_US
+    pool: $(agentPool)
+    displayName: Deploy Infra - SBOX-US
+    dependsOn:
+      - PushDockerImagesToACR_SBOX_US
+    variables:
+      - template: ./variables/infra-sbox-us.yml
+    jobs:
+      - job: DeployInfra
+        displayName: Deploy Infra - SBOX-US
+        steps:
+          - template: ./templates/infra-deploy.yml
+            parameters:
+              iacRoot: $(iacRoot)
+              azureResourceManagerConnection: ${{variables.azureResourceManagerConnection}}
+
+  - stage: Persistent_SBOX_US
+    displayName: SQL Setup - SBOX_US
+    dependsOn:
+      - DeployInfra_SBOX_US
+    variables:
+      - template: ./variables/infra-sbox-us.yml
+    jobs:
+      - template: ./templates/persistent.yml
+        parameters:
+          connectedServiceNameARM: ${{ variables.connectedServiceNameARM }}
+          agentPool: ${{ variables.agentPool }}
+
+  - stage: UpdateFlux_SBOX_US
+    displayName: Update Flux - SBOX-US
+    dependsOn:
+      - DeployInfra_SBOX_US
+    variables:
+      - template: ./variables/infra-sbox-us.yml
+      - template: ./variables/cortex.yml
+    jobs:
+      - job: UpdateFluxWebApi
+        displayName: Update Flux - webapi - SBOX-US
+        steps:
+          - template: ./templates/flux-update.yml
+            parameters:
+              overlayFiles: 'content-library-service-api-deployment.yaml,content-library-service-consumer-deployment.yaml'
+              gitopsRepo: content-library-service-gitops
+              branch: main
+      - template: azure-devops/send-deployment-metrics.yaml@cortex-devops
+        parameters:
+          entityTag: ${{variables.entityTag}}
+          serviceName: ${{variables.serviceName}}
+          environment: ${{variables.targetEnv}}
+          organization: ${{variables.organization}}
+          project: ${{variables.project}}
+          jobDependency: UpdateFluxWebApi
+          appType: ${{variables.appType}}

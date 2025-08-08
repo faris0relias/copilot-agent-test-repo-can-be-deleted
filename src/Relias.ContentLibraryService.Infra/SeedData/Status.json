@@ -1,0 +1,22 @@
+[
+  {
+    "statusId": 1,
+    "name": "Draft"
+  },
+  {
+    "statusId": 2,
+    "name": "Review"
+  },
+  {
+    "statusId": 3,
+    "name": "Approved"
+  },
+  {
+    "statusId": 4,
+    "name": "Published"
+  },
+  {
+    "statusId": 5,
+    "name": "Archived"
+  }
+]

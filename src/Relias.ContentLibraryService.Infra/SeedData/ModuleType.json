@@ -1,0 +1,68 @@
+[
+  {
+    "id": "bcb75cc1-8e91-4246-961d-d0828ab20b41",
+    "name": "Courses",
+    "moduleCategoryId": "75d56ab3-2d7e-4a34-bf3d-33f69a6d5ac7",
+    "description": "Customers buy course content and assign these courses to their employees. Employees often take courses to earn a CE or to meet the compliance requirements of their organization."
+  },
+  {
+    "id": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "name": "Personalized Learning",
+    "moduleCategoryId": "75d56ab3-2d7e-4a34-bf3d-33f69a6d5ac7",
+    "description": "Personalized learning is a form of highly specialized training. Proficiency is demonstrated via assessments and may be part of a personalized training plan."
+  },
+  {
+    "id": "19aa3ebc-32ed-40fe-a05e-369afaba7539",
+    "name": "Pro-on-go",
+    "moduleCategoryId": "75d56ab3-2d7e-4a34-bf3d-33f69a6d5ac7",
+    "description": "Quick content! These are similar to Courses but have no exams. They are designed to be shorter content that may be a refresher course or quick skills reference."
+  },
+  {
+    "id": "12f0662c-7b93-46f4-8757-b100c4798354",
+    "name": "Live Events",
+    "moduleCategoryId": "75d56ab3-2d7e-4a34-bf3d-33f69a6d5ac7",
+    "description": "Live events are classroom experiences."
+  },
+  {
+    "id": "697487aa-fbff-4d5d-89f0-6d3fdfeaee3f",
+    "name": "MDS-RAI",
+    "moduleCategoryId": "75d56ab3-2d7e-4a34-bf3d-33f69a6d5ac7",
+    "description": "These are like courses for Canada/US  then uploaded and published in the LMS. Exam has more attribute are more exhaustive."
+  },
+  {
+    "id": "37f9b305-bfc5-45ae-8e44-686066d08358",
+    "name": "Skill Checklist",
+    "moduleCategoryId": "75d56ab3-2d7e-4a34-bf3d-33f69a6d5ac7",
+    "description": "Skills checklists measure learner’s competencies and ability to demonstrate specific job related tasks. They can include an observer who must sign off on the checklist."
+  },
+  {
+    "id": "da653027-f16c-4d05-9f22-93f8f3d05219",
+    "name": "Assesments",
+    "moduleCategoryId": "75c93752-cbcb-4985-8e99-ffe2dfe2135c",
+    "description": "Assessments are performed for up skill and staffing purposes."
+  },
+  {
+    "id": "8fac37ba-be18-4098-b3b6-69c9e891a706",
+    "name": "Competency Evaluation",
+    "moduleCategoryId": "75c93752-cbcb-4985-8e99-ffe2dfe2135c",
+    "description": "A scheduled event that needs a Preceptor sign off."
+  },
+  {
+    "id": "49028b19-f4bd-45b5-84f5-65a7a387bdcd",
+    "name": "Requirement Tracker",
+    "moduleCategoryId": "e64d6ead-5d41-4f87-a228-daf5bb6b9b85",
+    "description": "RTs are created by customers and are like a course but with less attributes. The learner can update their completion date once they have uploaded their certificate. Administrators have the ability to verify a RT completion on their dashboard. Not sure if the RT has evaluations?"
+  },
+  {
+    "id": "b19c3abe-b443-4fb9-9911-5bcb79d537e6",
+    "name": "Policies",
+    "moduleCategoryId": "18747ccd-5595-44a3-a729-5403c031ea2b",
+    "description": "Policies requires attestations from assigned users."
+  },
+  {
+    "id": "30a781c0-d8ff-44c4-a846-51bc34807aa8",
+    "name": "Regulations",
+    "moduleCategoryId": "18747ccd-5595-44a3-a729-5403c031ea2b",
+    "description": "Regulations may trigger new actions or training plans when changed or introduced."
+  }
+]

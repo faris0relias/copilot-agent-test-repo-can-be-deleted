@@ -1,0 +1,21 @@
+variables:
+  - name: targetEnv
+    value: prd-ca
+  - name: subscriptionId
+    value: 760cd487-2f3b-42d2-82ea-124cb83096f4
+  - name: primaryLocation
+    value: canadacentral
+  - name: pairedLocation
+    value: canadaeast
+  - name: acrEndpoint
+    value: prdcaclmscr001.azurecr.io
+  - name: azureResourceManagerConnection
+    value: shared-ca-platforms-workloads-prod
+  - name: acrServiceConnection
+    value: acr-prdcaclmscr001-PlatformDevelopment
+  - name: agentPool
+    value: prd-cac-agent-pool
+  - name: azureSqlServer
+    value: prd-ca-lms-sqlmi-001-fog.9a960ea45cf9.database.windows.net
+  - name: connectedServiceNameARM
+    value: sqlmigration-prd-ca

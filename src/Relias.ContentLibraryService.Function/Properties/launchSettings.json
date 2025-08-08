@@ -1,0 +1,26 @@
+{
+  "profiles": {
+    "Relias.ContentLibraryService.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7071",
+      "environmentVariables": {
+        "AZURE_FUNCTIONS_ENVIRONMENT": "Local",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+        "AZURE_TENANT_ID": "838dd0ab-c484-4619-ac32-807ef6da0240",
+        "APPCONFIGENDPOINTURL_PRIMARY": "https://dev1-eus2-content-library-service-appconfig-001.azconfig.io",
+        "APPCONFIGENDPOINTURL_SECONDARY": "https://dev1-eus2-content-library-service-appconfig-001-secondary.azconfig.io"
+      }
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "DockerfileRunArguments": "--init",
+      "httpPort": 32793,
+      "useSSL": false,
+      "environmentVariables": {
+        "AZURE_FUNCTIONS_ENVIRONMENT": "Local",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+      }
+    }
+  }
+}

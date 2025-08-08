@@ -1,0 +1,16 @@
+# steps-print-variables.yml
+# Description:
+#   Diagnostic step(s) that's run when 
+#   "Enable system diagnostics" is selected.
+#   It writes all the environment variables
+#   to stdout so they can be viewed in the logs. 
+
+steps:
+
+- task: PowerShell@2
+  displayName: Print environment variables
+  condition: eq( variables['System.Debug'], true )
+  inputs:
+    targetType: inline
+    pwsh: true
+    script: 'dir env:'

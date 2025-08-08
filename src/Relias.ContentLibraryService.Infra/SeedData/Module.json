@@ -1,0 +1,165 @@
+[
+  {
+    "moduleId": "8b03b3dd-864d-4d3d-bfab-c21d82c528b2",
+    "moduleName": "Module_1",
+    "moduleTypeId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "title": "Title_1",
+    "description": "Description_1",
+    "version": 1,
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "moduleStatus": "Draft",
+    "languageIds": [ "d56d8fb3-3192-4e95-8ca9-601ebe27821a" ],
+    "briefDescription": "Brief_Description_1",
+    "moduleCode": "moduleCode_1",
+    "firstPublishDate": null,
+    "lastPublishDate": null,
+    "reviewDate": null,
+    "archiveDate": null,
+    "statusId": 1,
+    "targetAudienceIds": [
+      "92add7e4-1f94-47d7-8027-fa201c13ebbc",
+      "30c32182-621e-4a9a-a53d-7068a7043f94",
+      "97411967-a47f-4e79-b11e-0b7abf1cf811"
+    ],
+    "settingIds": [
+      "3f81084f-69fe-40b9-9839-cd780ab2c6d7",
+      "524bc78f-347a-4589-9955-a2a54f48ce81",
+      "d9ed7573-df1c-4b2a-b77d-9bb6c26befd5"
+    ]
+  },
+  {
+    "moduleId": "c8808e0b-84d6-468d-a492-60ab1469c8ba",
+    "moduleName": "Module_2",
+    "moduleTypeId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "title": "Title_2",
+    "description": "Description_2",
+    "version": 1,
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "moduleStatus": "Review",
+    "languageIds": [ "d56d8fb3-3192-4e95-8ca9-601ebe27821a" ],
+    "briefDescription": "Brief_Description_2",
+    "moduleCode": "moduleCode_2",
+    "firstPublishDate": null,
+    "lastPublishDate": "2020-07-10T03:15:00",
+    "reviewDate": null,
+    "archiveDate": null,
+    "statusId": 1,
+    "targetAudienceIds": [
+      "17f37530-ab44-4020-b660-e2aadc4db2fb",
+      "fb96997c-27ab-49c0-88ea-a8467f285cad"
+    ],
+    "settingIds": [
+      "2d664476-4496-403f-8e61-cf382742cd75",
+      "3f81084f-69fe-40b9-9839-cd780ab2c6d7"
+    ]
+  },
+  {
+    "moduleId": "bf9e4840-0782-4507-ac7c-d3fe4802c4d9",
+    "moduleName": "Module_3",
+    "moduleTypeId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "title": "Title_3",
+    "description": "Description_3",
+    "version": 2,
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "moduleStatus": "Approved",
+    "languageIds": [ "d56d8fb3-3192-4e95-8ca9-601ebe27821a" ],
+    "briefDescription": "Brief_Description_3",
+    "moduleCode": "moduleCode_3",
+    "firstPublishDate": "2019-09-01T01:14:04",
+    "lastPublishDate": null,
+    "reviewDate": null,
+    "archiveDate": null,
+    "statusId": 1,
+    "targetAudienceIds": [ "00721f7b-6c62-4cf8-b862-821461a54427" ],
+    "settingIds": [
+      "d9ed7573-df1c-4b2a-b77d-9bb6c26befd5",
+      "2d664476-4496-403f-8e61-cf382742cd75",
+      "0d13c42b-7b6f-4ed6-88c1-6f8b436281ac",
+      "524bc78f-347a-4589-9955-a2a54f48ce81"
+    ]
+  },
+  {
+    "moduleId": "5d56fd94-4ccd-44fa-a59b-256e47a7b1b4",
+    "moduleName": "Module_4",
+    "moduleTypeId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "title": "Title_4",
+    "description": "Description_4",
+    "version": 2,
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "moduleStatus": "Approved",
+    "languageIds": [
+      "d56d8fb3-3192-4e95-8ca9-601ebe27821a",
+      "11102ef6-323f-4a43-a2b7-facfd1c59aaa"
+    ],
+    "briefDescription": "Brief_Description_4",
+    "moduleCode": "moduleCode_4",
+    "firstPublishDate": "2014-01-22T11:23:54",
+    "lastPublishDate": "2020-07-10T03:15:00",
+    "reviewDate": null,
+    "archiveDate": null,
+    "statusId": 1,
+    "targetAudienceIds": [
+      "00721f7b-6c62-4cf8-b862-821461a54427",
+      "fb96997c-27ab-49c0-88ea-a8467f285cad"
+    ],
+    "settingIds": [
+      "3f81084f-69fe-40b9-9839-cd780ab2c6d7"
+    ]
+  },
+  {
+    "moduleId": "e490b125-b6fc-4587-b6ac-a23a64d34e3b",
+    "moduleName": "Module_5",
+    "moduleTypeId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "title": "Title_5",
+    "description": "Description_5",
+    "version": 3,
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "moduleStatus": "Published",
+    "languageIds": [
+      "d56d8fb3-3192-4e95-8ca9-601ebe27821a",
+      "11102ef6-323f-4a43-a2b7-facfd1c59aaa"
+    ],
+    "briefDescription": "Brief_Description_5",
+    "moduleCode": "moduleCode_5",
+    "firstPublishDate": null,
+    "lastPublishDate": null,
+    "reviewDate": null,
+    "archiveDate": null,
+    "statusId": 1,
+    "targetAudienceIds": [
+      "8e891f80-1a17-42ef-a984-d527d6ceb673",
+      "fb96997c-27ab-49c0-88ea-a8467f285cad",
+      "00721f7b-6c62-4cf8-b862-821461a54427"
+    ],
+    "settingIds": [
+      "15a9f50a-49f5-4612-b3be-8f1193c994f1",
+      "2d664476-4496-403f-8e61-cf382742cd75",
+      "d9ed7573-df1c-4b2a-b77d-9bb6c26befd5"
+    ]
+  },
+  {
+    "moduleId": "81cac04b-efb5-482a-8f50-92bf89b89126",
+    "moduleName": "Module_6",
+    "moduleTypeId": "6813e21c-60d3-44ba-9ba8-2edd37eaa832",
+    "title": "Title_6",
+    "description": "Description_6",
+    "version": 3,
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "moduleStatus": "Archived",
+    "languageIds": [ "11102ef6-323f-4a43-a2b7-facfd1c59aaa" ],
+    "briefDescription": "Brief_Description_6",
+    "moduleCode": "moduleCode_6",
+    "firstPublishDate": "2024-07-13T08:00:00",
+    "lastPublishDate": null,
+    "reviewDate": null,
+    "archiveDate": null,
+    "statusId": 1,
+    "targetAudienceIds": [
+      "17f37530-ab44-4020-b660-e2aadc4db2fb"
+    ],
+    "settingIds": [
+      "fc2b25a4-beac-4fe0-93f4-078016c48fa5",
+      "15a9f50a-49f5-4612-b3be-8f1193c994f1"
+    ]
+  }
+]

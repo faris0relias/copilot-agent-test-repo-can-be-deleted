@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Relias.ContentLibraryService.Consumer": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "healthcheck",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        // can be used to specify a specific tenant for debugging purposes
+        // switch between azure cloud (dev1) and LLC (personal dev service bus)
+        "AZURE_TENANT_ID": "838dd0ab-c484-4619-ac32-807ef6da0240" 
+      },
+      "applicationUrl": "https://localhost:50822;http://localhost:50823"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+parameters:
+  - name: azureResourceManagerConnection
+    type: string
+
+steps:
+  
+  - task: AzureCLI@2
+    displayName: What-If - $(targetEnv) - $(primaryLocation)
+    inputs:
+      azureSubscription: ${{parameters.azureResourceManagerConnection}}
+      scriptType: 'pscore'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        write-host "setting subscription $(subscriptionId)"
+        az config set bicep.use_binary_from_path=false
+        az account set --subscription $(subscriptionId)
+
+        write-host "runing what-if against $(targetEnv)-$(primaryLocation)"
+        az deployment sub what-if `
+        --name deploy-infra-$(targetEnv)-$(Build.BuildId) `
+        --no-prompt true `
+        --location $(primaryLocation) `
+        --template-file '.iac/infra.bicep' `
+        --parameters '.iac/parameters/infra-$(targetEnv).bicepparam'

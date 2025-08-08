@@ -1,0 +1,11 @@
+variables:
+  - name: entityTag
+    value: content-library-service
+  - name: serviceName
+    value: content-library-service
+  - name: organization
+    value: ReliasEngineering
+  - name: project
+    value: PlatformDevelopment
+  - name: appType
+    value: API

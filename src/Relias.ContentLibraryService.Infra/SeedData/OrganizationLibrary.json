@@ -1,0 +1,27 @@
+[
+  {
+    "id": "fb8afe7b-250c-4093-a5a3-4a61e1a50c89",
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "libraryId": "fe224548-bdbc-4e5f-8d9b-f416cf3f70b7"
+  },
+  {
+    "id": "d20be218-bc72-49ab-91d3-addce259a6fe",
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "libraryId": "0f6cfd41-ae31-4544-92bc-f79729cff1f9"
+  },
+  {
+    "id": "f0bb5a76-1c16-4e8e-b8fc-304697262254",
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "libraryId": "54079522-7a51-44e9-bf6c-28ed444bb738"
+  },
+  {
+    "id": "6b80a0c5-df24-4354-8924-4db613d032a2",
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "libraryId": "450af6dc-22c1-430f-8f09-1acf419005bf"
+  },
+  {
+    "id": "fa43ad76-430a-41f7-adc4-e39d0b629867",
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "libraryId": "966236bf-ab69-450d-81ac-e0762cbd2a8e"
+  }
+]

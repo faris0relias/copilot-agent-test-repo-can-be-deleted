@@ -1,0 +1,22 @@
+{
+  "permissions": [
+    {
+      "resourceName": "dev1-eus2-content-library-service-appconfig-001",
+      "resourceType": "Microsoft.AppConfiguration/configurationStores",
+      "roleName": "App Configuration Data Reader",
+      "resourceGroup": "dev1-content-library-service-rg"
+    },
+    {
+      "resourceName": "dev1-eus2-cl-svc-kv-001",
+      "resourceType": "Microsoft.KeyVault/vaults",
+      "roleName": "Key Vault Secrets User",
+      "resourceGroup": "dev1-content-library-service-rg"
+    },
+    {
+      "resourceName": "dev1-eus2-sb-001/topics/compliance.policy.published",
+      "resourceType": "Microsoft.ServiceBus/namespaces",
+      "roleName": "Azure Service Bus Data Owner",
+      "resourceGroup": "dev1-sb-rg"
+    }
+  ]
+}

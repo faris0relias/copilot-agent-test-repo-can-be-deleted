@@ -1,0 +1,35 @@
+[
+  {
+    "certificateId": "a2e4b83f-07d8-430c-93d7-63ab669223a2",
+    "type": "Sample Type",
+    "Status": 1,
+    "title": "Sample Certificate Title",
+    "description": "Sample Certificate Description",
+    "board": "Sample Board",
+    "creditHours": 3,
+    "startDate": "2023-01-01T00:00:00",
+    "expirationDate": "2023-12-31T23:59:59"
+  },
+  {
+    "certificateId": "ffe5e666-2695-4cd4-9cc0-8576ce00abd3",
+    "type": "Professional Certification",
+    "Status": 1,
+    "title": "Certified Nurse Practitioner",
+    "description": "This certificate confirms the successful completion of the Nurse Practitioner certification program.",
+    "board": "American Nurses Credentialing Center",
+    "creditHours": 28,
+    "startDate": "2019-11-21T01:05:00",
+    "expirationDate": "2023-09-01T13:09:00"
+  },
+  {
+    "certificateId": "4c47171f-7989-44d0-bee9-c611c01b8d1c",
+    "type": "Professional Certification",
+    "Status": 1,
+    "title": "Project Management Professional (PMP)",
+    "description": "This certificate signifies competence in leading and directing project teams.",
+    "board": "Project Management Institute (PMI)",
+    "creditHours": 9,
+    "startDate": "2023-12-01T09:00:00",
+    "expirationDate": "2025-01-31T23:59:59"
+  }
+]

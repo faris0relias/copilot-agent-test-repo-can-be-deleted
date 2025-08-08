@@ -1,0 +1,20 @@
+[
+  {
+    "organizationId": "a201756c-9d18-4f2e-97d1-6e4554a1bc62",
+    "organizationName": "Organization_1",
+    "legacyOrganizationId": 1,
+    "organizationCode": "OR_1"
+  },
+  {
+    "organizationId": "b652f326-a6d6-4e58-8ba9-ccb6acb2ed79",
+    "organizationName": "Organization_2",
+    "legacyOrganizationId": 1,
+    "organizationCode": "OR_2"
+  },
+  {
+    "organizationId": "7caa9613-1b89-40f6-8586-1e9b00316e67",
+    "organizationName": "Organization_3",
+    "legacyOrganizationId": 1,
+    "organizationCode": "OR_3"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "contributorID": "7be9d308-40c3-4055-81a0-7d3cd5fa36ed",
+    "name": "Contributor_1",
+    "image": "Image_1_Path",
+    "designation": "Senior Developer",
+    "about": "Experienced developer with a passion for creating robust software solutions."
+  },
+  {
+    "contributorID": "19823828-3765-428b-a457-9c0dbc403c77",
+    "name": "Contributor_2",
+    "image": "Image_2_Path",
+    "designation": "Software Engineer",
+    "about": "Passionate about creating scalable web applications."
+  },
+  {
+    "contributorID": "42c144b0-2f3b-42b0-9126-31ea22d46e42",
+    "name": "Contributor_3",
+    "image": "Image_3_Path",
+    "designation": "UX Designer",
+    "about": "Specializes in creating intuitive user experiences for web and mobile applications."
+  },
+  {
+    "contributorID": "1247f92c-df81-44f1-b123-6dbb371c8477",
+    "name": "Contributor_4",
+    "image": "Image_4_Path",
+    "designation": "Product Manager",
+    "about": "Experienced in leading product teams to deliver impactful solutions."
+  },
+  {
+    "contributorID": "f70c6cf4-34b7-4d05-8170-48192a521db6",
+    "name": "Contributor_5",
+    "image": "Image_5_Path",
+    "designation": "Content Writer",
+    "about": "Expert in applying psychological principles to improve learning outcomes."
+  }
+] 

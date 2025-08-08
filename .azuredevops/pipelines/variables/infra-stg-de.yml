@@ -1,0 +1,21 @@
+variables:
+  - name: targetEnv
+    value: stg-de
+  - name: subscriptionId
+    value: e6036236-a7f0-41c5-850a-54de53a62b15
+  - name: primaryLocation
+    value: germanywestcentral
+  - name: pairedLocation
+    value: germanynorth
+  - name: acrEndpoint
+    value: prddewclmscr001.azurecr.io
+  - name: azureResourceManagerConnection
+    value: shared-de-platforms-workloads-nonprod
+  - name: acrServiceConnection
+    value: acr-prddewclmscr001-PlatformDevelopment
+  - name: agentPool
+    value: prd-dewc-agent-pool
+  - name: azureSqlServer
+    value: stg-de-lms-sqlmi-001-fog.fd16442d94ac.database.windows.net
+  - name: connectedServiceNameARM
+    value: sqlmigration-stg-de

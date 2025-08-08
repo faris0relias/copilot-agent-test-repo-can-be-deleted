@@ -1,0 +1,255 @@
+[
+  {
+    "targetAudienceId": "17f37530-ab44-4020-b660-e2aadc4db2fb",
+    "name": "Activities Professional",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "b1ac7a32-8e83-43e9-b385-d479e69fdd7c",
+    "name": "Administrators",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "fb96997c-27ab-49c0-88ea-a8467f285cad",
+    "name": "Alcohol and Drug Counselors",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "6d6b8f92-b3ff-4aa2-8977-c38bf8c6de54",
+    "name": "Athletic Trainers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "92add7e4-1f94-47d7-8027-fa201c13ebbc",
+    "name": "Behavioral Analyst",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "e78bdfb7-0c0a-4700-81a1-a764361cfa23",
+    "name": "Case Managers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "30c32182-621e-4a9a-a53d-7068a7043f94",
+    "name": "Central Sterile Personnel",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "54c459d2-cd78-4906-87d9-1e5317859858",
+    "name": "Certified Medical Assistants",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "97411967-a47f-4e79-b11e-0b7abf1cf811",
+    "name": "Clinical Laboratory Personnel",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "d593c2a0-1cab-4c88-a19a-0038f6cc38c1",
+    "name": "CNAs and Nurses / Frontline staff",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "93f42c7d-a06f-4235-bcb2-a4a2d7772c11",
+    "name": "Coding Specialists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "6664a49b-dc78-4c3a-a482-9ee0844d1192",
+    "name": "Correctional Officers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "00721f7b-6c62-4cf8-b862-821461a54427",
+    "name": "Dental Professionals",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "cf9e2f69-cb2c-41c9-a296-e21ab627e81c",
+    "name": "Dietitians",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "8ae31d64-1040-46e4-885f-7c584ae02bc9",
+    "name": "Direct Care Workers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "9b454c53-a512-4cc5-a809-88611666774f",
+    "name": "Direct Support Professionals",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "362c1087-4c99-4d34-92f8-e29e4ed2cd04",
+    "name": "Emergency Medical Personnel",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "407a6610-804d-4926-bec4-1c70bd84548b",
+    "name": "Fitness Professionals",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "ed87a57c-5ef7-40ee-8876-32f9a137424c",
+    "name": "General Staff",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "c133ffee-69a4-4a1a-ae3d-f74743f0705a",
+    "name": "Health & Social Care Workers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "f5d12d20-4f51-43b0-b33a-6c13a7b74c33",
+    "name": "Health Educators",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "ce099ef8-0bcf-43d3-9862-cd54515f161f",
+    "name": "Human Resource Professional",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "2faf8cee-5e77-4b3d-9f78-80a5c5537668",
+    "name": "Law Enforcement",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "8e891f80-1a17-42ef-a984-d527d6ceb673",
+    "name": "Marriage and Family Therapists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "f350da65-e2dd-4c82-8bd4-698305e8c02c",
+    "name": "Nurses",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "67c01022-b26f-48dd-b252-901f7cce4f0a",
+    "name": "Occupational Therapists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "6a3223dd-8db5-473d-bb2e-4724a9896c3c",
+    "name": "Pharmacists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "c4b32680-f981-4c11-9e91-35c61b911cb8",
+    "name": "Pharmacy Technicians",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "ab88e55f-b42a-451d-bb20-1b63f3554145",
+    "name": "Physical Therapists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "42c559a8-28b0-437a-a61a-2df5dda9cdf0",
+    "name": "Physician Assistants",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "b4b89078-9685-4c25-bb7d-55c84fa34c1b",
+    "name": "Physicians",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "14a16b3f-f4e3-444d-bf32-249c1e852e36",
+    "name": "Probation/Parole Officers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "cad2480c-50fa-4d24-9ac2-1197cc94da64",
+    "name": "Professional Counselors",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "1ff249b5-985b-4394-a41a-a38e715deb96",
+    "name": "Psychologists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "397c7f81-5389-4c51-895a-040d6567a295",
+    "name": "Qualified Intellectual Disability Professionals",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "b2fdc03d-90df-466b-992c-2cd13c07c744",
+    "name": "Radiologic Technologists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "fba7a7fd-e157-49ae-a3ef-ae95bca47096",
+    "name": "Registered Behavior Technician",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "9bd2830a-f5d7-423e-904c-e12197033d9d",
+    "name": "Respiratory Therapists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "9b0787e3-806b-47e3-8bdf-11830cc0e714",
+    "name": "Social Workers",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "fafd3d85-9000-4f89-a870-219f82e61044",
+    "name": "Speech and Language Pathologists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "18e3fc60-9a98-4c86-9a7f-5a5ced479e42",
+    "name": "Surgical Technologists",
+    "description": "",
+    "isActive": true
+  },
+  {
+    "targetAudienceId": "083815af-d8d2-4ccf-a9c1-6923b9b57b16",
+    "name": "Other",
+    "description": "",
+    "isActive": true
+  }
+]
+	

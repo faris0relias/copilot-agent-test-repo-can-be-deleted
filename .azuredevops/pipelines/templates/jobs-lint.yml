@@ -1,0 +1,73 @@
+# jobs-lint.yml
+# Description: 
+#   Runs linting job on Bicep files 
+#   by running the Bicep CLI build commands
+#   which aligns with the bicepconfig.json rules.
+#
+#   Runs JSON lint by running the PowerShell Test-Json
+#   Cmdlet. There is a current issue with this 
+#   Cmdlet with JSON files with start with square brackets. 
+#   That is mitigated by try catch with ConvertFrom-Json.
+
+jobs:
+- job: lintJob
+  displayName: 'Lint Bicep'
+  dependsOn: []
+  steps:
+  - template: steps-print-variables.yml
+  - task: PowerShell@2
+    displayName: Validate Bicep CLI tooling
+    inputs:
+      targetType: 'inline'
+      script: |
+        az bicep version
+        if (0 -ne $LASTEXITCODE) {
+          az bicep install
+          if (0 -ne $LASTEXITCODE) {
+              Write-Host "##vso[task.logissue type=error]Failed installing Azure Bicep CLI"
+          }
+        }
+      pwsh: true
+  - task: PowerShell@2
+    displayName: 'Build Bicep files'
+    inputs:
+      targetType: 'inline'
+      script: |
+        Get-ChildItem -Path .\ -Filter *.bicep -Recurse -File | ? {$_.Directory -notlike "*modules*Microsoft.*"} | ForEach-Object { 
+          $bicepFilePath = $_.FullName 
+          Write-Host "Build and Link Bicep file: $bicepFilePath"
+          az bicep build --file $bicepFilePath
+        }
+      pwsh: true
+      failOnStderr: true  # set to true to capture stderr bicep errors from linter
+
+- job: 'lintJsonJob'
+  displayName: 'Lint JSON'
+  dependsOn: []
+  steps:
+  - template: steps-print-variables.yml
+  - task: PowerShell@2
+    displayName: 'Lint JSON files'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $lintFailed = $false
+        Get-ChildItem -Path .\ -Filter *.json -Recurse -File | ? {$_.Directory -notlike "*modules*Microsoft.*"} | ForEach-Object { 
+          $jsonFilePath = $_.FullName
+          Write-Host "Linting JSON file: $jsonFilePath"
+          $jsonContent = Get-Content $jsonFilePath | Out-String -ErrorAction SilentlyContinue
+          if(($jsonContent | Test-Json -ErrorAction SilentlyContinue) -eq $false) {
+            Write-Warning "Test-Json failed to parse '$jsonFilePath'. Attempting to convert using ConvertFrom-Json"
+            try {
+              $result = ConvertFrom-Json $jsonContent
+            } catch {
+              Write-Host "##vso[task.logissue type=error]JSON file '$jsonFilePath' is not valid."
+              $lintFailed = $true
+            }
+          }
+        }
+
+        if ($lintFailed) {
+          Write-Host "##vso[task.logissue type=warning]JSON linting has failed, there are invalid JSON files in this repository."
+        }
+      pwsh: true

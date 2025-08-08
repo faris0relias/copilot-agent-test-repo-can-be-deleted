@@ -1,0 +1,12 @@
+openapi: 3.0.1
+info:
+  title: Content Library Service
+  description: ""
+  x-cortex-tag: cl-svc
+  x-cortex-git:
+    bitbucket:
+      repository: relias/cl-svc
+      alias: default
+  x-cortex-custom-metadata:
+    cortex-template-version: 1.0.0
+    cortex-generated-timestamp: 2024-09-26T15:09:00.987900064

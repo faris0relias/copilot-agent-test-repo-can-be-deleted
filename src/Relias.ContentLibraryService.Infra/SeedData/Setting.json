@@ -1,0 +1,86 @@
+[
+  {
+    "settingId": "f7811c18-84ed-4a64-9c8a-1b0d7bdbcf40",
+    "name": "All Healthcare Settings"
+  },
+  {
+    "settingId": "02f81621-43bc-424b-a39d-c9f056812a98",
+    "name": "Intellectual Developmental Disabilities"
+  },
+  {
+    "settingId": "81fe5848-57cf-4831-b2ca-e780ef71eaf4",
+    "name": "Acute Care Facility"
+  },
+  {
+    "settingId": "d9ed7573-df1c-4b2a-b77d-9bb6c26befd5",
+    "name": "Pre-Hospital Setting"
+  },
+  {
+    "settingId": "7cd5ec69-3ed7-480b-9b85-d58cd5597feb",
+    "name": "Hospice"
+  },
+  {
+    "settingId": "c4784991-ba83-4a41-b826-45413964407f",
+    "name": "Post-Acute Care"
+  },
+  {
+    "settingId": "bee02f99-aab1-44ed-a1d5-eb97be0775d5",
+    "name": "Home Health"
+  },
+  {
+    "settingId": "94e19fce-9860-4849-9ef9-c664ff0359c3",
+    "name": "Health and Human Services"
+  },
+  {
+    "settingId": "15a9f50a-49f5-4612-b3be-8f1193c994f1",
+    "name": "Community Health Settings"
+  },
+  {
+    "settingId": "f5d237d7-31bf-400f-bf20-1ea14e6d10c5",
+    "name": "Palliative Care"
+  },
+  {
+    "settingId": "8761aad9-c9b6-45c9-a2cd-cfb422341931",
+    "name": "Long-term Care"
+  },
+  {
+    "settingId": "fc2b25a4-beac-4fe0-93f4-078016c48fa5",
+    "name": "Rehabilitation Settings"
+  },
+  {
+    "settingId": "0d13c42b-7b6f-4ed6-88c1-6f8b436281ac",
+    "name": "Adult Corrections"
+  },
+  {
+    "settingId": "b772ddcf-a48a-474d-b09b-754c96a297b4",
+    "name": "Juvenile Corrections"
+  },
+  {
+    "settingId": "2d664476-4496-403f-8e61-cf382742cd75",
+    "name": "Law Enforcement"
+  },
+  {
+    "settingId": "3f81084f-69fe-40b9-9839-cd780ab2c6d7",
+    "name": "Public Health Facilities"
+  },
+  {
+    "settingId": "a6bedeb0-186d-467c-a735-97bde456f2c2",
+    "name": "Health & Social Care Settings"
+  },
+  {
+    "settingId": "9f4ce6cf-f6be-4309-bf16-85334206bad9",
+    "name": "Adult Community Supervision Agencies"
+  },
+  {
+    "settingId": "44ac0a5d-2356-4856-b80f-942d5828f332",
+    "name": "Adult Community Corrections"
+  },
+  {
+    "settingId": "524bc78f-347a-4589-9955-a2a54f48ce81",
+    "name": "Residential Care"
+  },
+  {
+    "settingId": "8bad2d9e-5373-4bfd-be70-cfd7ee7a18a3",
+    "name": "Outpatient/Ambulatory Clinics"
+  }
+]

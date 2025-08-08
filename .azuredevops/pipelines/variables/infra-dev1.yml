@@ -1,0 +1,21 @@
+variables:
+  - name: targetEnv
+    value: dev1
+  - name: subscriptionId
+    value: 3741355f-a2fe-4aa7-b024-1cecffdca327
+  - name: primaryLocation
+    value: eastus2
+  - name: pairedLocation
+    value: centralus
+  - name: acrEndpoint
+    value: deveus2lmscr001.azurecr.io
+  - name: azureResourceManagerConnection
+    value: shared-dev-platforms-workloads-nonprod
+  - name: acrServiceConnection
+    value: acr-deveus2lmscr001-PlatformDevelopment
+  - name: agentPool
+    value: dev-eus2-agent-pool
+  - name: azureSqlServer
+    value: dev1-lms-sqlmi-001-fog.9f0e1cdca4c9.database.windows.net
+  - name: connectedServiceNameARM
+    value: sqlmigration-dev1

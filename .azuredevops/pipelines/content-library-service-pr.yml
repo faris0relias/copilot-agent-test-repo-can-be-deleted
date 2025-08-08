@@ -1,0 +1,77 @@
+name: $(SourceBranch)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - src/*
+      - tests/*
+      - .azuredevops/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  dotnetVersion: 8.0.x
+  solutionRoot: $(Build.SourcesDirectory)
+  testRoot: tests
+  srcRoot: src
+  sonarCloudName: Relias SonarCloud-GH
+  Dockertoken: $(System.AccessToken)
+
+stages:
+  - stage: BuildAndUnitTest
+    displayName: Build and Unit Test
+    jobs:
+      - job: BuildAndUnitTest
+        displayName: Build and Unit Test
+        steps:
+          - task: UseDotNet@2
+            displayName: Use .NET Core SDK $(dotnetVersion)
+            inputs:
+              version: $(dotnetVersion)
+
+          - task: NuGetAuthenticate@1
+            displayName: NuGet Authenticate
+
+          - template: ./templates/dotnet-build-and-test.yml
+            parameters:
+              command: build
+              devopsScriptsPath: $(solutionRoot)/.azuredevops/pipelines/scripts
+              projects:
+                - Relias.ContentLibraryService.Api
+              srcRoot: $(srcRoot)
+              sonarCloudName: $(sonarCloudName)
+              sonarProjectKey: relias-engineering_content-library-service
+              sonarProjectName: content-library-service
+              testProjects:
+                - Relias.ContentLibraryService.Api.Tests
+                - Relias.ContentLibraryService.App.Tests
+                - Relias.ContentLibraryService.Common.Tests
+                - Relias.ContentLibraryService.Infra.Tests
+                - Relias.ContentLibraryService.Integration.Tests
+              testRoot: $(testRoot)
+              artifactName: Unit
+
+  - stage: BuildDockerImages
+    displayName: Build Docker Images
+    dependsOn:
+      - BuildAndUnitTest
+    jobs:
+      - job: BuildDockerImages
+        displayName: Build Docker Images
+        steps:
+          - template: ./templates/docker-build.yml
+            parameters:
+              solutionRoot: $(solutionRoot)
+              imageName: content-library-service-api
+              tag: $(Build.BuildId)
+              dockerFile: $(srcRoot)/Relias.ContentLibraryService.Api/Dockerfile
+              laceworkAccount: relias
+              laceworkPassword: $(LW_ACCESS_TOKEN)
+              attachImage: false
+              token: $(DockerToken)
