@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-
 namespace Relias.ContentLibraryService.Api.Controllers
 {
     // API Versioning
