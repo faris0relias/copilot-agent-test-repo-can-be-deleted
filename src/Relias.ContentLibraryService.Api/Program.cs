@@ -1,4 +1,9 @@
 using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.Mvc;
+using MediatR;
+using FluentValidation;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Relias.ContentLibraryService.Api.Middleware;
 using Relias.ContentLibraryService.Api.Startup;
@@ -14,6 +19,38 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: InternalsVisibleTo("Relias.ContentLibraryService.UnitTests")]
 var builder = WebApplication.CreateBuilder(args);
+// Register MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Relias.ContentLibraryService.App.Features.GetHealthStatusQuery).Assembly));
+
+// Register FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(Relias.ContentLibraryService.App.Features.HealthStatusDtoValidator).Assembly);
+// Add API Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+});
+
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+// Add Swagger
+builder.Services.AddSwaggerGen(options =>
+{
+    var provider = builder.Services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+    foreach (var description in provider.ApiVersionDescriptions)
+    {
+        options.SwaggerDoc(description.GroupName, new Microsoft.OpenApi.Models.OpenApiInfo
+        {
+            Title = $"Relias Content Library Service API {description.ApiVersion}",
+            Version = description.GroupName
+        });
+    }
+});
 
 const string PrimaryAppConfigurationEndpointKey = "APPCONFIG_ENDPOINT_PRIMARY";
 const string SecondaryAppConfigurationEndpointKey = "APPCONFIG_ENDPOINT_SECONDARY";
